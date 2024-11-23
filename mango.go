@@ -30,11 +30,21 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 
 	// read the request, access your DS to find the full version
 	// of URL, redirect to that URL
+	shortCode := strings.TrimPrefix(r.URL.Path, "/r/")
+	originalURL, exists := urlMap[shortCode]
+	if !exists {
+		http.Error(w, "URL not found", http.StatusNotFound)
+		return
+	}
+
+
+	http.Redirect(w, r, originalURL, http.StatusFound)
+
 }
 
 // Serve frontend index.html file
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-
+	http.ServeFile(w,r,"index.html")
 }
 
 func main() {
